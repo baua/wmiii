@@ -7,12 +7,12 @@ requires amixer || exit 97
 
 if sb_ready 1; then
     lck ${LOCK_SB_MODULE} on
-    read vol mute <<< "$(eval ${VOLUMESTATUS})"
-
+    status=$(user_volume status)
+    read vol mute <<< "$(user_volume status)"
     case ${BUTTON} in
-        ${MOUSE_L}) eval ${VOLUMETOGGLE};;
-        ${MOUSE_U}) eval ${VOLUMEUP};;
-        ${MOUSE_D}) eval ${VOLUMEDOWN};;
+        ${MOUSE_L}) $(user_volume toggle);;
+        ${MOUSE_U}) $(user_volume up);;
+        ${MOUSE_D}) $(user_volume down);;
     esac
 
     if [ "${mute}" == "off" ]; then
@@ -21,7 +21,6 @@ if sb_ready 1; then
 
     DATA=${vol}
     sb_write_cache "${DATA}"
-
     lck ${LOCK_SB_MODULE} off
 fi
 sb_read_cache
