@@ -118,7 +118,7 @@ if [ ! -d ${WMII_SHM} ]; then
     printf "About to launch wmii..."
     #exec 3<>0
     #exec 0>&-
-    startx -- -nolisten tcp 2>&1 | plogger ERR startx
+    ssh-agent startx -- -nolisten tcp 2>&1 | plogger ERR startx
     e=$?
     #exec 0<>3
     #exec 3>&-
