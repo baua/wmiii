@@ -1,0 +1,22 @@
+#!/bin/bash
+. "${WMII_CONFPATH%%:*}/statusbar.conf"
+THEME=SW
+SYMBOL=2600
+
+requires xbacklight || exit 97
+
+if sb_ready 1; then
+    lck ${LOCK_SB_MODULE} on
+
+    brightness=$(xbacklight)
+    case ${BUTTON} in
+        ${MOUSE_U}) xbacklight -inc 10;;
+        ${MOUSE_D}) xbacklight -dec 10;;
+    esac
+
+    DATA=${brightness%%.*}
+    sb_write_cache "${DATA}"
+
+    lck ${LOCK_SB_MODULE} off
+fi
+sb_read_cache
