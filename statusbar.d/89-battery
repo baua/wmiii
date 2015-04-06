@@ -6,6 +6,8 @@ SYMBOL=23E3 #. Benzene
 
 requires acpi || exit 97
 
+profiles + HOME
+
 acpi 2>&1|grep -q 'No support'
 test $? -ne 0 || exit 1
 

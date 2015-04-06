@@ -4,6 +4,7 @@ THEME=SW
 SYMBOL=2600
 
 requires xbacklight || exit 97
+profiles + HOME
 
 if sb_ready 1; then
     lck ${LOCK_SB_MODULE} on
