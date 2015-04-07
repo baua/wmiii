@@ -19,7 +19,7 @@ if sb_ready 16; then
     battery_state=$(awk -F '[ ,]*' 'NR==1{print(tolower($3))}' ${SB_STAGE_F})
     battery_charge=$(awk -F '[ ,%]*' 'NR==1{print$4}' ${SB_STAGE_F})
 
-    if [ $(sb_battery_state ${MOUSE_L}) -eq 1 ]; then
+    if [ $(sb__state ${MOUSE_L}) -eq 1 ]; then
         battery_life=$(awk 'NR==2{printf" ~%s(%s/%s)",$13,$10,$5}' ${SB_STAGE_F});
     fi
 
