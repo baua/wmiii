@@ -3,7 +3,7 @@ reset:
 	chmod 700 08-brightness 09-volume 11-dropbox
 	chmod 700 31-clipboard #33-nc 35-screen 36-jira
 	#chmod 700 50-daemonized
-	#chmod 700 60-eth 62-tmux 65-sock 68-vpn 69-internetz
+	chmod 700 60-eth 62-tmux #65-sock 68-vpn 69-internetz
 	chmod 700 80-mem 81-cpu 89-battery
-	chmod 700 99-time
+	chmod 700 98-work 99-time
 	# 10-muzik 88-entropy 82-hdd
