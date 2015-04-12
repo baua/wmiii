@@ -1,0 +1,50 @@
+#!/bin/bash
+. "${WMII_CONFPATH%%:*}/statusbar.conf"
+THEME=HW
+SYMBOL=2622 #. Radioactive
+JIRABIN=~/workspace/api/jira/jira.py
+JIRAURL=https://jira.sirca.org.au/jira/browse/
+
+profiles + RT || exit 96
+
+if sb_ready 60; then
+    lck ${LOCK_SB_MODULE} on
+
+    #. Cached dump of data for reuse...
+    #expensive-command > ${SB_STAGE_F}
+    if [ ! -e ${SB_STAGE_F} ] || ! sb_urgent; then
+        touch ${SB_STAGE_F}
+        (
+            ${JIRABIN} list updated > ${SB_STAGE_F}.staged
+            test $? -ne 0 || mv ${SB_STAGE_F}.staged ${SB_STAGE_F}
+        )
+    fi
+
+    if [ -s ${SB_STAGE_F} ]; then
+        while read line ; do
+            IFS='|' read tid updated summary <<< "${line}" 
+            tickets[$i]=$(
+                printf "%s %s: wm_tag_focus jira;browse -a -i rt %s%s" "${tid}" "${summary/:/_}" "${JIRAURL}" "${tid}"
+            )
+            DATA="${DATA} ${tid}"
+            ((i++))
+            done < ${SB_STAGE_F}
+        else
+            tickets[0]="...processing...: echo"
+        fi
+    case ${BUTTON} in
+        ${MOUSE_R})
+            wm_context_menu "${tickets[@]}" ;;
+    esac
+    if [ 'x${DATA}' = 'x' ]; then
+    	SB_ALERT=NORM
+    	sb_escalate NORM
+    else
+    	SB_ALERT=DULL
+    	sb_escalate NORM
+    fi
+
+    sb_write_cache "${DATA}"
+    lck ${LOCK_SB_MODULE} off
+fi
+sb_read_cache "default-msg"
