@@ -1,0 +1,51 @@
+#!/bin/bash
+. "${WMII_CONFPATH%%:*}/statusbar.conf"
+THEME=HW
+SYMBOL=2318 #. POI
+
+requires setxkbmap || exit 97
+profiles + HOME || exit 96
+
+if sb_ready 16; then
+    lck ${LOCK_SB_MODULE} on
+
+    #. Cached dump of data for reuse...
+    rv=$(/usr/bin/setxkbmap -query |grep layout)
+    LAYOUT=${rv##* }
+    DATA=${LAYOUT^^*}
+    case $(sb_state ${MOUSE_L}) in
+        0)
+		rv=$(/usr/bin/setxkbmap -query |grep layout)
+		LAYOUT=${rv##* }
+		DATA=${LAYOUT^^*}
+        ;;
+    esac
+
+    case ${BUTTON} in
+        ${MOUSE_L}) ;;
+        ${MOUSE_M}) ;;
+        ${MOUSE_R})
+            wm_context_menu \
+                "US:     /usr/bin/setxkbmap -layout us;"\
+                "ES:     /usr/bin/setxkbmap -layout es;"\
+                "FR:     /usr/bin/setxkbmap -layout fr;"\
+                "DE:     /usr/bin/setxkbmap -layout de;"\
+        ;;
+
+        ${MOUSE_S})
+        ;;
+
+        ${MOUSE_U}) ;;
+        ${MOUSE_D}) ;;
+    esac
+    rv=$(/usr/bin/setxkbmap -query |grep layout)
+    LAYOUT=${rv##* }
+    DATA=${LAYOUT^^*}
+
+    SB_ALERT=DULL
+    sb_escalate NORM
+
+    sb_write_cache "${DATA}"
+    lck ${LOCK_SB_MODULE} off
+fi
+sb_read_cache "default-msg"
