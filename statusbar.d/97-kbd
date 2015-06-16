@@ -4,7 +4,7 @@ THEME=HW
 SYMBOL=2318 #. POI
 
 requires setxkbmap || exit 97
-profiles + HOME || exit 96
+#profiles + HOME || exit 96
 
 if sb_ready 16; then
     lck ${LOCK_SB_MODULE} on
