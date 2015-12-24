@@ -60,10 +60,10 @@ function webapp() {
         ff)
             if [ -n "${uri}" ]; then
                 #wmiir setsid
-                ${browser} -no-remote -P ${bid}-${id} "${uri}"
+                ${browser} -no-remote -P ${id} "${uri}"
             else
                 #wmiir setsid
-                ${browser} -no-remote -P ${bid}-${id}
+                ${browser} -no-remote -P ${id}
             fi
         ;;
         *)
