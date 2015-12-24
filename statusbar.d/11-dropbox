@@ -2,6 +2,7 @@
 . "${WMII_CONFPATH%%:*}/statusbar.conf"
 THEME=SW
 SYMBOL=22A1 #. Box and dot
+SYMBOL=232c
 
 requires dropbox || exit 97
 
@@ -19,10 +20,9 @@ if sb_ready 3; then
     esac
 
     if dropbox running; then
-        DATA="offline"
+        DATA="off"
         SB_ALERT=DULL
     else
-        DATA="online"
         DATA=$(dropbox status|head -n1)
         if [ "${DATA}" == "Up to date" ]; then
             DATA="ok"

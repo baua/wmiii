@@ -3,10 +3,11 @@
 THEME=HW
 SYMBOL=2622
 SYMBOL=23E3 #. Benzene
+SYMBOL=26a1
 
 requires acpi || exit 97
 
-profiles + HOME
+profiles + HOME RT
 
 acpi 2>&1|grep -q 'No support'
 test $? -ne 0 || exit 1
@@ -19,8 +20,16 @@ if sb_ready 16; then
     battery_state=$(awk -F '[ ,]*' 'NR==1{print(tolower($3))}' ${SB_STAGE_F})
     battery_charge=$(awk -F '[ ,%]*' 'NR==1{print$4}' ${SB_STAGE_F})
 
-    if [ $(sb__state ${MOUSE_L}) -eq 1 ]; then
+    if [ $(sb_state ${MOUSE_L}) -eq 1 ]; then
         battery_life=$(awk 'NR==2{printf" ~%s(%s/%s)",$13,$10,$5}' ${SB_STAGE_F});
+    fi
+
+    if [ ${battery_charge} -lt 10 ]; then
+        sb_escalate CRIT
+    elif [ ${battery_charge} -lt 20 ]; then
+        sb_escalate WARN
+    elif [ ${battery_charge} -gt 97 ]; then
+        sb_escalate GOOD
     fi
 
     if [ "${battery_state}" == "charging" ]; then
@@ -33,14 +42,6 @@ if sb_ready 16; then
         battery_state=' -'
     elif [ "${battery_state}" == "unknown" ]; then
         battery_state=' -'
-    fi
-
-    if [ ${battery_charge} -lt 10 ]; then
-        sb_escalate CRIT
-    elif [ ${battery_charge} -lt 20 ]; then
-        sb_escalate WARN
-    elif [ ${battery_charge} -gt 97 ]; then
-        sb_escalate GOOD
     fi
 
     test -z "${battery_charge}" || battery_charge="${battery_charge}%"

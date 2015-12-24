@@ -8,7 +8,8 @@ if sb_ready 30; then
     lck ${LOCK_SB_MODULE} on
     DATA=
     case $(sb_state ${MOUSE_L}) in
-        1) DATA=$(printf "%02x%02x" "$(date +'%-H')" "$(date +'%-M')") ;;
+        #1) DATA=$(printf "%02x%02x" "$(date +'%-H')" "$(date +'%-M')") ;;
+        1) DATA=$(date +'%H:%M');;
         0) DATA=${WMII_STATUSBARDATEFORMAT} ;;
     esac
 

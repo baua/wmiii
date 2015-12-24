@@ -1,6 +1,9 @@
 #!/bin/bash
 . "${WMII_CONFPATH%%:*}/statusbar.conf"
 THEME=NW
+SYMBOL=2628
+
+IWINF=wlp3s0
 
 requires wpa_supplicant || exit 97
 
@@ -15,13 +18,13 @@ if sb_ready 10; then
         ;;
     esac
 
-    DATA=$(iwconfig wlan0|awk -F '[\t =]*' '$3~/Quality/{print $4}')
+    DATA=$(iwconfig ${IWINF}|awk -F '[\t =]*' '$3~/Quality/{print $4}')
     if [ -z "${DATA}" ]; then
         DATA=w
         SB_ALERT=DULL
     else
         if [ $(sb_state ${MOUSE_L}) -eq 1 ]; then
-            DATA="w $(ip wlan0):${DATA}"
+            DATA="w $(ip ${IWINF}):${DATA}"
         else
             DATA="w"
         fi

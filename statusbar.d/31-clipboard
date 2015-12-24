@@ -3,6 +3,7 @@
 THEME=SW
 SYMBOL=2702
 SYMBOL=2328
+SYMBOL=270d
 
 requires xsel xclip || exit 97
 
