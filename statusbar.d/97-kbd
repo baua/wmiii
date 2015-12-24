@@ -2,6 +2,7 @@
 . "${WMII_CONFPATH%%:*}/statusbar.conf"
 THEME=HW
 SYMBOL=2318 #. POI
+SYMBOL=2328
 
 requires setxkbmap || exit 97
 #profiles + HOME || exit 96
@@ -30,6 +31,7 @@ if sb_ready 16; then
                 "ES:     /usr/bin/setxkbmap -layout es;"\
                 "FR:     /usr/bin/setxkbmap -layout fr;"\
                 "DE:     /usr/bin/setxkbmap -layout de;"\
+                "Reload xmodmap: xmodmap $HOME/.Xmodmap -pm;"\
         ;;
 
         ${MOUSE_S})
