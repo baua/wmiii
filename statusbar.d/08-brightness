@@ -3,16 +3,14 @@
 THEME=SW
 SYMBOL=2600
 
-requires xbacklight || exit 97
-profiles + HOME
-
 if sb_ready 1; then
     lck ${LOCK_SB_MODULE} on
 
-    brightness=$(xbacklight)
+    brightness=$(user_brightness status)
     case ${BUTTON} in
-        ${MOUSE_U}) xbacklight -inc 10;;
-        ${MOUSE_D}) xbacklight -dec 10;;
+        ${MOUSE_U}) $(user_brightness up);;
+        ${MOUSE_D}) $(user_brightness down);;
+        ${MOUSE_M}) $(user_brightness toggle);;
     esac
 
     DATA=${brightness%%.*}
