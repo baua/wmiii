@@ -8,6 +8,8 @@ declare -g -r WMII_ROOT="${HOME}/.wmii/"
 export WMII_ROOT
 test -d ${WMII_ROOT} || exit 1
 
+[[ $(dropbox status) == "Dropbox isn't running!" ]] && dropbox start > /dev/null 2>&1
+
 source ${WMII_ROOT}/core.conf
 : ${WMII_LOG?}
 : ${WMII_SHM?}
