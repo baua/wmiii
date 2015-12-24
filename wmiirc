@@ -2,10 +2,26 @@
 
 #WMII_ROOT="${WMII_CONFPATH%%:*}"
 : ${WMII_ROOT?}
+
+WMII_LOCATION=home
+WMII_HARDWARE_SYSTEM=$(sudo dmidecode -s system-product-name)
+
+case $(WMII_HARDWARE_SYSTEM) in
+	MacBook*)
+		WMII_HARDWARE=laptop
+		;;
+	*)
+		WMII_HARDWARE=desktop
+esac
+
+export WMII_LOCATION WMII_HARDWARE
+
 source ${WMII_ROOT}/wmii.conf
 
 mn_bootstrap;
 logger INFO "bootstrapping nomad-wmii system...complete"
+
+ssh-add
 
 #. Open up /event for reading; and read line by line:
 logger INFO "loop(main)...start"
