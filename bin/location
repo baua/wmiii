@@ -1,0 +1,90 @@
+#!/bin/bash
+function byWifi () {
+    # recognisable locations
+    declare -a locations=(home sirca)
+    declare -a homeWAPs=( "ScottyNet" "ScottyNet_EXT" )
+    declare -a sircaWAPs=( "sirca_data" )
+
+    winf=$(iwconfig 2>/dev/null |grep IEEE)
+    winfname=${winf%% *}
+    declare -ga availableAPs=$(sudo iwlist wlp3s0 scan |grep ESSID | while read essid; do d=${essid##ESSID:}; echo "${d//\"/} "; done)
+
+    declare -ga recognisedAPs=
+
+    # by wifi
+    declare -a connectedAP=$(iwconfig 2>&1 |grep "Access Point:" | while read line; do echo ${line##* }; done)
+
+    # find all WAPs that are in range and in the locations array
+    for location in ${locations[@]}; do
+        for wap in $(eval echo \${${location}WAPs[@]}); do
+            for availableAP in ${availableAPs[@]}; do
+                if [ ${availableAP} == ${wap} ]; then
+                    recognisedAPs+=(${wap})
+                fi
+            done
+        done
+    done
+
+    # determine location based on WAPs found
+    for location in ${locations[@]}; do
+        for wap in $(eval echo \${${location}WAPs[@]}); do
+            for recognisedAP in ${recognisedAPs[@]}; do
+                if [ ! "${locationAP}" == "${recognisedAP}" ]; then
+                    # if one does not match check next location
+                    break 1
+                fi
+            done
+        done
+        # if we got here we found our location
+        echo ${location}
+        exit 0;
+    done
+}
+
+
+function byAP () {
+    # recognisable locations
+    declare -gA locations=(
+        [home-office]="32:46:9A:FF:DE:AF"
+        [sirca]='( "34:A8:4E:C5:E0:C0" "ab" )' )
+
+    winf=$(iwconfig 2>/dev/null |grep IEEE)
+    winfname=${winf%% *}
+    declare -ga availableAPs=$(sudo iwlist wlp3s0 scan |grep Cell | while read cell num a add mac; do echo -n "${mac} "; done)
+
+    declare -ga recognisedAPs=
+
+    # by wifi
+    declare -a connectedAP=$(iwconfig 2>&1 |grep "Access Point:" | while read line; do echo ${line##* }; done)
+
+    # find all WAPs that are in range and in the locations array
+    for location in ${!locations[@]}; do
+        for locationAP in ${locations[${location}][@]}; do
+            for availableAP in ${availableAPs[@]}; do
+                if [ ${availableAP} == ${locationAP} ]; then
+                    recognisedAPs+=(${availableAP})
+                fi
+            done
+        done
+    done
+
+    # determine location based on WAPs found
+    for location in ${!locations[@]}; do
+        #echo loc=$location ${#locations[$location][@]}
+        if [ ${#locations[${location}][@]} -ge 1 ]; then
+            for locationAP in ${locations[${location}][@]}; do
+                for recognisedAP in ${recognisedAPs[@]}; do
+                    if [ ! "${locationAP}" == "${recognisedAP}" ]; then
+                        # if one does not match check next location
+                        break 1
+                    fi
+                done
+            done
+            # if we got here we found our location
+            echo ${location}
+            exit 0;
+        fi
+    done
+}
+
+byWifi
