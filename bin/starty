@@ -120,6 +120,7 @@ if [ ! -d ${WMII_SHM} ]; then
     printf "About to launch wmii..."
     #exec 3<>0
     #exec 0>&-
+    echo Unlock $(date +"%d/%m/%y %H:%M") >> ~/.times
     ssh-agent startx -- -nolisten tcp 2>&1 | plogger ERR startx
     e=$?
     #exec 0<>3
