@@ -2,8 +2,8 @@
 function byWifi () {
     # recognisable locations
     declare -a locations=(home sirca)
-    declare -a homeWAPs=( "ScottyNet" "ScottyNet_EXT" )
-    declare -a sircaWAPs=( "sirca_data" )
+    declare -a homeWAPs=( "huaraz" "ScottyNet_EXT" )
+    declare -a sircaWAPs=( "sirca-data" )
 
     winf=$(iwconfig 2>/dev/null |grep IEEE)
     winfname=${winf%% *}
@@ -29,16 +29,13 @@ function byWifi () {
     for location in ${locations[@]}; do
         for wap in $(eval echo \${${location}WAPs[@]}); do
             for recognisedAP in ${recognisedAPs[@]}; do
-                if [ ! "${locationAP}" == "${recognisedAP}" ]; then
-                    # if one does not match check next location
-                    break 1
+                if [ "${wap}" == "${recognisedAP}" ]; then
+                    break 3
                 fi
             done
         done
-        # if we got here we found our location
-        echo ${location}
-        exit 0;
     done
+    echo ${location}
 }
 
 
