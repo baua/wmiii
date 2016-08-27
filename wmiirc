@@ -6,22 +6,34 @@
 WMII_LOCATION=home
 WMII_HARDWARE_SYSTEM=$(sudo dmidecode -s system-product-name)
 
-case $(WMII_HARDWARE_SYSTEM) in
+WMII_SCREENS=$(xrandr |grep " connected " | wc -l)
+
+ln -sf ${HOME}/.Xresources.generic ${HOME}/.Xresources.wmii
+case ${WMII_HARDWARE_SYSTEM} in
 	MacBook*)
 		WMII_HARDWARE=laptop
+        # change font if primary screen is on MacBook
+        # high res screen
+        if [ ${WMII_SCREENS} -eq 1 ]; then
+            ln -sf ${HOME}/.Xresources.macbook ${HOME}/.Xresources.wmii
+        fi
 		;;
 	*)
 		WMII_HARDWARE=desktop
 esac
 
-export WMII_LOCATION WMII_HARDWARE
+export WMII_LOCATION WMII_HARDWARE WMII_SCREENS
 
 source ${WMII_ROOT}/wmii.conf
 
 mn_bootstrap;
 logger INFO "bootstrapping nomad-wmii system...complete"
 
+# load ssh keys into ssh-agent
+# generic and host-specific
 ssh-add
+SSH_KEY_HOST=${HOME}/.ssh/id_rsa_${HOSTNAME}
+test -r ${SSH_KEY_HOME} && ssh-add ${SSH_KEY_HOST}
 
 #. Open up /event for reading; and read line by line:
 logger INFO "loop(main)...start"
