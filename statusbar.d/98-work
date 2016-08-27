@@ -39,7 +39,7 @@ if sb_ready 60; then
 
     case ${BUTTON} in
         ${MOUSE_M})
-            xterm -e 'cat /home/martin/.times_calc && read -sn1'&
+            xterm -e 'cat ${HOME}/.times_calc && read -sn1'&
         ;;
         ${MOUSE_R})
             str="Running week: xterm -e '${BIN} week running show long && read -sn1' &"
