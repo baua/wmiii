@@ -1,13 +1,23 @@
 #!/bin/bash
+exit
 . "${WMII_CONFPATH%%:*}/statusbar.conf"
 THEME=NW
 SYMBOL=25f2
 
 requires lck || exit 97
+requires openconnect || exit 97
 
 if sb_ready 10; then
     lck ${LOCK_SB_MODULE} on
 
+    case ${BUTTON} in
+        ${MOUSE_L})
+                sudo openconnect -b offvpn
+            ;;
+        ${MOUSE_R})
+                sudo pkill openconnect
+            ;;
+    esac
     IP=$(ip tun0)
     if [ -z "${IP}" ]; then
         SB_ALERT=DULL
