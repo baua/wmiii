@@ -1,6 +1,6 @@
 #!/bin/bash -f
 
-WMII_ROOT="${HOME}/.wmii"
+export WMII_ROOT="${HOME}/.wmii"
 : ${WMII_ROOT?}
 
 WMII_LOCATION=home
