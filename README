@@ -1,12 +1,14 @@
 #!/bin/less
 #. Instructions:
-#.     * Drop this directory as-is into ~/.wmii
-#.     * Run make install
+#.     * Link ~/.wmii to your wmiii git repo
+#.     * Run make install and make installx
 #.     * Define PROFILE in your profile to HOME, WORK, or whatever
-#.     * Run ~/bin/starty
+#.     * Run startx or use your normal session manager, e.g. lightdm
+
+startx -> ~/.xinitrc -> starty
+lightdm -> ~/.xsession -> starty
 
 : FILES=<<!
-
    core.conf________________________________________starty*
      \
       \                statusbar.conf__
