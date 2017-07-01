@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=wmiii
+Comment=Window manager improved improved 3
+#Exec=/home/mlehmann/bin/starty
+Exec=default
