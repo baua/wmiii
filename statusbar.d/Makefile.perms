@@ -2,7 +2,10 @@ reset:
 	chmod 600 [0-9][0-9]-*
 
 	# generic
-	chmod 700 31-clipboard 60-net 80-mem 81-cpu 82-hdd 97-kbd 99-time
+	chmod 700 31-clipboard 60-net 80-mem 81-cpu 99-time
+
+	# needs passwordless sudo
+	# chmod 700 82-hdd
 
 	# media
 	# chmod 700 09-volume 10-muzik
