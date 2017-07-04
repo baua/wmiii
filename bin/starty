@@ -4,7 +4,7 @@
 PROFILE=HOME
 : "${PROFILE?}"
 
-declare -g -r WMII_ROOT="${HOME}/.wmii/"
+declare -g -r WMII_ROOT="${HOME}/.wmii-hg/"
 export WMII_ROOT
 test -d "${WMII_ROOT}" || exit 1
 
@@ -131,7 +131,7 @@ if [ ! -d "${WMII_SHM}" ]; then
         ssh-agent startx -- -nolisten tcp 2>&1 | plogger ERR startx
         e=$?
     else
-        wmii
+        wmii -r "${WMII_ROOT}/wmiirc"
         e=$?
     fi
     #exec 0<>3
