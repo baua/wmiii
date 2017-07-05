@@ -1,15 +1,15 @@
 #!/bin/bash -f
 
-export WMII_ROOT="${HOME}/.wmii"
+export WMII_ROOT="${HOME}/.wmii-hg"
 : ${WMII_ROOT?}
 
 WMII_LOCATION=home
-WMII_HARDWARE_SYSTEM=$(sudo dmidecode -s system-product-name)
+WMII_HARDWARE_SYSTEM="$(sudo dmidecode -s system-product-name)"
 
 WMII_SCREENS=$(xrandr |grep " connected " | wc -l)
 
 ln -sf ${HOME}/.Xresources.generic ${HOME}/.Xresources.wmii
-[ -e "${HOME}/.Xresources.${WMII_HARDWARE_SYSTEM}" ] && ln -sf "${HOME}/.Xresources.${WMII_HARDWARE_SYSTEM}" "${HOME}/.Xresources.wmii"
+[ -e "${HOME}/.Xresources.${WMII_HARDWARE_SYSTEM// /_}" ] && ln -sf "${HOME}/.Xresources.${WMII_HARDWARE_SYSTEM// /_}" "${HOME}/.Xresources.wmii"
 
 case ${WMII_HARDWARE_SYSTEM} in
 	MacBook*) WMII_HARDWARE=laptop ;;
