@@ -1,5 +1,5 @@
 #!/bin/bash
-. "${WMII_CONFPATH%%:*}/statusbar.conf"
+. "${WMII_ROOT}/statusbar.conf"
 SYMBOL=262f
 
 requires xterm || exit 97

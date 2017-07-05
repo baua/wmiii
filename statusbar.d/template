@@ -1,5 +1,5 @@
 #!/bin/bash
-. "${WMII_CONFPATH%%:*}/statusbar.conf"
+. "${WMII_ROOT}/statusbar.conf"
 THEME=HW
 SYMBOL=25CE #. Bullseye
 SYMBOL=2022 #. Bullet point
