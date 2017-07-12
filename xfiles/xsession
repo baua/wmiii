@@ -1,0 +1,10 @@
+#!/bin/bash
+ppid=$(ps -o ppid= $$)
+parentcmd="$(ps -o cmd= ${ppid})"
+case "${parentcmd}" in
+    *bash*) WMII_PARENT=bash ;;
+    *dm*) WMII_PARENT="${parentcmd%% *}" ;;
+    *) WMII_PARENT="unknown"
+esac
+export WMII_PARENT
+${HOME}/bin/starty

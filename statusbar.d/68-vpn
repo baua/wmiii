@@ -1,6 +1,6 @@
 #!/bin/bash
 exit
-. "${WMII_CONFPATH%%:*}/statusbar.conf"
+. "${WMII_ROOT}/statusbar.conf"
 THEME=NW
 SYMBOL=25f2
 

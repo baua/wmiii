@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${WMII_ROOT:=${HOME}/.wmii}
+: ${WMII_ROOT:=${HOME}/.wmii-hg}
 . ${WMII_ROOT?}/base.conf
 
 function webapp() {
@@ -8,7 +8,7 @@ function webapp() {
 
     local -A bidz=(
         [sf]=$(which surf)
-        [gc]=$(which chromium || which google-chrome || which chrome)
+        [gc]=$(which chromium || which chromium-browser || which google-chrome || which chrome)
         [ff]=$(which firefox)
     )
 

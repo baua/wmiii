@@ -1,5 +1,5 @@
 #!/bin/bash
-. "${WMII_CONFPATH%%:*}/statusbar.conf"
+. "${WMII_ROOT}/statusbar.conf"
 THEME=HW
 SYMBOL=2609
 

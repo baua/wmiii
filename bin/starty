@@ -1,16 +1,15 @@
 #!/bin/bash
-
 #. Make sure you have the following line in your fstab!
 #shm  ${WMII_SHM:-/dev/shm/wmii} tmpfs defaults,user,noexec,nodev,nosuid,noauto,noatime,size=512M,nr_inodes=8k,mode=770 0 0
+PROFILE=HOME
 : "${PROFILE?}"
 
-declare -g -r WMII_ROOT="${HOME}/.wmii/"
+declare -g -r WMII_ROOT="${HOME}/.wmii-hg/"
 export WMII_ROOT
 test -d "${WMII_ROOT}" || exit 1
 
-[[ $(dropbox status) == "Dropbox isn't running!" ]] && dropbox start > /dev/null 2>&1
 
-source "${WMII_ROOT}/core.conf"
+source "${WMII_ROOT}/core.conf" && echo "Successfully sourced core.conf"
 : "${WMII_LOG?}"
 : "${WMII_SHM?}"
 : "${WMII_CACHE?}"
@@ -68,6 +67,9 @@ function cleanup() {
     done
     printf "Done\n"
 }
+if $(which dropbox); then
+    [[ $(dropbox status) == "Dropbox isn't running!" ]] && dropbox start > /dev/null 2>&1
+fi
 
 e=0
 printf "Starting X..."
@@ -112,6 +114,7 @@ if [ ! -d "${WMII_SHM}" ]; then
 
     printf "Syncing cache to memory..."
     sync
+    [ ! -d "${WMII_CACHE_SHM_PERSIST}" ] && mkdir -p "${WMII_CACHE_SHM_PERSIST}"
     rsync -qa "${WMII_CACHE_SHM_PERSIST}/ ${WMII_CACHE_SHM}/"
     #unlink ~/cache
     #ln -sf ${WMII_CACHE_SHM}/ ~/cache
@@ -124,17 +127,18 @@ if [ ! -d "${WMII_SHM}" ]; then
         echo Unlock "$(date +"%d/%m/%y %H:%M")" >> ~/.times
         echo "$(date +"%x %H:%M") WMII started" >> ~/workspace/logbook.txt
     fi
-    ssh-agent startx -- -nolisten tcp 2>&1 | plogger ERR startx
-    e=$?
+    if [ "${WMII_PARENT}" == "bash" ]; then
+        ssh-agent startx -- -nolisten tcp 2>&1 | plogger ERR startx
+        e=$?
+    else
+        wmii -r "${WMII_ROOT}/wmiirc"
+        e=$?
+    fi
     #exec 0<>3
     #exec 3>&-
     [ $e -eq 0 ] && printf "Done\n" || printf "Failed\n"
     cleanup
-
     sync
-    echo "Your processes as of the exit from wmii..."
-    pstree -u "$(whoami)"
-
     popd >/dev/null #. }}
 else
     printf "Failed\n"
