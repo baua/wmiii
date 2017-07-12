@@ -1,5 +1,5 @@
 #!/bin/bash
-. "${WMII_CONFPATH%%:*}/statusbar.conf"
+. "${WMII_ROOT}/statusbar.conf"
 THEME=HW
 SYMBOL=2665
 
@@ -69,7 +69,7 @@ if sb_ready 7; then
         fi
     fi
 
-    cpudata=( $(ps -eo 'pid,state,pcpu,cputime,comm'|${WMII_CONFPATH%%:*}/statusbar.d/ps.awk) )
+    cpudata=( $(ps -eo 'pid,state,pcpu,cputime,comm'|${WMII_ROOT}/statusbar.d/ps.awk) )
     if [ ${#cpudata} -gt 0 ] && [ ${cpudata[0]} -gt 0 ]; then
         if [ ${lapct} -gt 5 ]; then
             sb_escalate ${cpudata[1]}

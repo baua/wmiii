@@ -14,8 +14,14 @@ share:
 	@git daemon --reuseaddr --base-path=${PWD} ${PWD}
 	@rm .git/git-daemon-export-ok
 
-install: $(foreach b,${BIN},${HOME}/${b})
+install: $(foreach b,${BIN},${HOME}/${b}) xfiles
 	@echo "Installation complete!"
+
+.PHONY: installx
+installx:
+	@ln -sf $(PWD)/xfiles/xsession ${HOME}/.xsession
+	@ln -sf $(PWD)/xfiles/xsession ${HOME}/.xinitrc
+	@sudo cp $(PWD)/xfiles/wmiii.desktop /usr/share/xsessions/
 
 ${HOME}/bin/%:
 	@ln -sf $(PWD)/bin/$(@F) ${HOME}/bin/$(@F)

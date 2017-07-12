@@ -1,28 +1,22 @@
 #!/bin/bash -f
 
-#WMII_ROOT="${WMII_CONFPATH%%:*}"
+export WMII_ROOT="${HOME}/.wmii-hg"
 : ${WMII_ROOT?}
 
 WMII_LOCATION=home
-WMII_HARDWARE_SYSTEM=$(sudo dmidecode -s system-product-name)
+WMII_HARDWARE_SYSTEM="$(sudo dmidecode -s system-product-name)"
 
 WMII_SCREENS=$(xrandr |grep " connected " | wc -l)
 
 ln -sf ${HOME}/.Xresources.generic ${HOME}/.Xresources.wmii
+[ -e "${HOME}/.Xresources.${WMII_HARDWARE_SYSTEM// /_}" ] && ln -sf "${HOME}/.Xresources.${WMII_HARDWARE_SYSTEM// /_}" "${HOME}/.Xresources.wmii"
+
 case ${WMII_HARDWARE_SYSTEM} in
-	MacBook*)
-		WMII_HARDWARE=laptop
-        # change font if primary screen is on MacBook
-        # high res screen
-        if [ ${WMII_SCREENS} -eq 1 ]; then
-            ln -sf ${HOME}/.Xresources.macbook ${HOME}/.Xresources.wmii
-        fi
-		;;
-	*)
-		WMII_HARDWARE=desktop
+	MacBook*) WMII_HARDWARE=laptop ;;
+	*) WMII_HARDWARE=desktop ;;
 esac
 
-export WMII_LOCATION WMII_HARDWARE WMII_SCREENS
+export WMII_LOCATION WMII_HARDWARE WMII_SCREENS WMII_HARDWARE_SYSTEM
 #xset r rate 200 40
 
 source ${WMII_ROOT}/wmii.conf

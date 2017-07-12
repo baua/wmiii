@@ -1,10 +1,26 @@
 reset:
 	chmod 600 [0-9][0-9]-*
-	chmod 700 08-brightness 09-volume 11-dropbox
-	chmod 700 31-clipboard #33-nc 35-screen 36-jira
-	#chmod 700 50-daemonized
-	chmod 700 60-eth 62-tmux #65-sock 68-vpn 69-internetz
-	chmod 700 80-mem 81-cpu 89-battery
-	chmod 700 97-kbd 98-work 99-time
-	chmod 700 97-kbd 99-time
-	# 10-muzik 88-entropy 82-hdd
+
+	# generic
+	chmod 700 31-clipboard 60-net 80-mem 81-cpu 99-time
+
+	# needs passwordless sudo
+	# chmod 700 82-hdd
+
+	# media
+	# chmod 700 09-volume 10-muzik
+
+	# laptop
+  	# chmod 700 08-brighness 89-battery
+
+	# cloud
+	# chmod 700 11-dropbox
+
+	# network
+	# chmod 700 33-nc 50-daemonized 65-sock 68-vpn 69-internetz
+
+	# sysadmin
+	# chmod 700 35-screen 36-jira 62-tmux
+
+	# misc
+	#chmod 700 98-work 88-entropy
