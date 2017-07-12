@@ -1,0 +1,38 @@
+#!/bin/bash
+. "${WMII_CONFPATH%%:*}/statusbar.conf"
+SYMBOL=270e
+
+requires xterm || exit 97
+LOGBOOK=${HOME}/workspace/logbook.txt
+
+if sb_ready 120; then
+    lck ${LOCK_SB_MODULE} on
+    DATA=$(grep -c TODO ${LOGBOOK})
+    #case $(sb_state ${MOUSE_L}) in
+    #    #1) DATA=$(printf "%02x%02x" "$(date +'%-H')" "$(date +'%-M')") ;;
+    #    1) DATA=$(TZ=America/Lima date +'%H:%M');;
+    #    0) DATA="${WMII_STATUSBARDATEFORMAT}" ;;
+    #esac
+
+    sb_write_cache "${DATA}"
+
+    case ${BUTTON} in
+        ${MOUSE_L})
+            wm_context_menu \
+                "NOTE:xterm -e '${HOME}/bin/addToLogbook.sh NOTE' &" \
+                "LOG:xterm -e '${HOME}/bin/addToLogbook.sh LOG' &" \
+                "TODO:xterm -e '${HOME}/bin/addToLogbook.sh TODO' &" \
+                "LUNCH:xterm -e '${HOME}/bin/addToLogbook.sh LUNCH' &" \
+            ;;
+        ${MOUSE_R})
+            wm_context_menu \
+                "Edit Logbook: wmiir xwrite /ctl/ view logbook"\
+            ;;
+        ${MOUSE_M})
+            xterm -e "grep TODO ${LOGBOOK} && read -sn1"&
+            disown
+        ;;
+    esac
+    lck ${LOCK_SB_MODULE} off
+fi
+sb_read_cache
