@@ -1,7 +1,6 @@
 #!/bin/bash
 #. Make sure you have the following line in your fstab!
 #shm  ${WMII_SHM:-/dev/shm/wmii} tmpfs defaults,user,noexec,nodev,nosuid,noauto,noatime,size=512M,nr_inodes=8k,mode=770 0 0
-PROFILE=HOME
 : "${PROFILE?}"
 
 declare -g -r WMII_ROOT="${HOME}/.wmii-hg/"
@@ -34,8 +33,7 @@ function cleanup() {
     printf "Syncing back cache to disk..."
     cp "${WMII_LOG}" /var/tmp/ 2>/dev/null
     if [ -d "${WMII_CACHE_SHM}" ]; then
-        rsync -qa --delete "${WMII_CACHE_SHM}/ ${WMII_CACHE_SHM_PERSIST?}/"
-        if [ $? -eq 0 ]; then
+        if rsync -qa --delete "${WMII_CACHE_SHM}/ ${WMII_CACHE_SHM_PERSIST?}/"; then
             printf "Done\n"
         else
             printf "Failed\n"
@@ -62,12 +60,15 @@ function cleanup() {
 
     printf "Cleaning up semaphores..."
     for i in {101..106} 120; do
-        lck $i delete >/dev/null 2>&1
-        [ $? -eq 0 ] && printf '.' || printf '!'
+        if lck $i delete >/dev/null 2>&1; then
+            printf '.' 
+        else
+            printf '!'
+        fi
     done
     printf "Done\n"
 }
-if $(which dropbox); then
+if which dropbox; then
     [[ $(dropbox status) == "Dropbox isn't running!" ]] && dropbox start > /dev/null 2>&1
 fi
 
@@ -108,7 +109,11 @@ if [ ! -d "${WMII_SHM}" ]; then
     chmod 000 "${WMII_SHM}"
     mount "${WMII_SHM}"
     l=/var/tmp/$(basename "${WMII_LOG}")
-    test -f "$l" && tail -n 1000 "$l" > "${WMII_LOG}" || touch "${WMII_LOG}"
+    if [ -f "$l" ]; then 
+        tail -n 1000 "$l" > "${WMII_LOG}"
+    else
+        touch "${WMII_LOG}"
+    fi
     chmod 600 "${WMII_LOG}"
     printf "Done\n"
 
