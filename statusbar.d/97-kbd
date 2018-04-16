@@ -23,9 +23,9 @@ if sb_ready 16; then
     esac
 
     case ${BUTTON} in
-        ${MOUSE_L}) ;;
+        ${MOUSE_R}) ;;
         ${MOUSE_M}) ;;
-        ${MOUSE_R})
+        ${MOUSE_L})
             wm_context_menu \
                 "US:     /usr/bin/setxkbmap -layout us;"\
                 "ES:     /usr/bin/setxkbmap -layout es;"\
