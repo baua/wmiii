@@ -1,0 +1,49 @@
+#!/bin/bash
+#shellcheck disable=SC2034,SC1090
+. "${WMII_ROOT}/statusbar.conf"
+THEME=NW
+SYMBOL=046a
+
+requires sshuttle || exit 97
+SSHUTTLEBIN="$(which sshuttle)"
+SSHUTTLEPID="${HOME}/.cache/sshuttle.pid"
+SSHUTTLEHOST="infsysp201.sirca.org.au"
+SSHUTTLEEXCLUDE="${HOME}/.sshuttle_exclude"
+SSHUTTLENETS="10.0.0.0/8"
+SSHUTTLEOPTS="--daemon --pidfile=${SSHUTTLEPID} --dns --exclude-from ${SSHUTTLEEXCLUDE} -r ${SSHUTTLEHOST}"
+YUBIHOST="watson.sirca.org.au"
+
+function yubiActive() {
+    if nc -w 1 -z "${YUBIHOST}" 222; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if sb_ready 30; then
+    lck "${LOCK_SB_MODULE}" on
+    DATA=ys
+    case ${BUTTON} in
+        ${MOUSE_L})
+            wm_context_menu \
+                  "start yubikey:yubiActive || xterm -e 'telnet watson.sirca.org.au'&"\
+                  "start sshuttle:${SSHUTTLEBIN} ${SSHUTTLEOPTS} ${SSHUTTLENETS}&"\
+                  "stop sshuttle:test -f ${SSHUTTLEPID} && kill $(cat "${SSHUTTLEPID}")&"\
+        ;;
+    esac
+
+    if yubiActive; then
+        DATA="${DATA/y/Y}"
+        SB_ALERT=NORM
+        if [ -f "${SSHUTTLEPID}" ]; then
+            DATA="${DATA/s/S}"
+        fi
+    else
+        SB_ALERT=DULL
+    fi
+    sb_write_cache "${DATA}"
+
+    lck "${LOCK_SB_MODULE}" off
+fi
+sb_read_cache
