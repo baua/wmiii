@@ -1,22 +1,37 @@
 #!/bin/bash
-CONF=~/.xranderize
+
+if [ $# -ge 1 ]; then
+    if [ -r "$1" ];  then
+        CONF=$1
+    else
+        echo "$1 is not a readable file."
+        exit 1
+    fi
+else
+    LOCATION=$(location)
+    if [ -r "${HOME}/.xranderize-${LOCATION}" ]; then
+        CONF="${HOME}/.xranderize-${LOCATION}"
+    else
+        CONF="${HOME}/.xranderize"
+    fi
+fi
 
 e=0
-if [ -e ${CONF} ]; then
+if [ -e "${CONF}" ]; then
     DEVICES=( $(xrandr|awk '$2~/^connected$/{print $1}') )
 
-    declare -A placement=( [M]= [L]= [R]= [A]= [B]= )
+    declare -A placement=( [M]= [L]= [R]= [A]= [B]= [RR]= [LL]= )
     declare -A rotation=(  [M]=normal [L]=normal [R]=normal [A]=normal [B]=normal )
 
     match=0
-    configured=( $(grep -E '^[^#]' ${CONF}) )
+    configured=( $(grep -E '^[^#]' "${CONF}") )
 
     if [ ${#DEVICES[@]} -ge 1 ]; then
-        for actual in ${DEVICES[@]}; do
-            for token in ${configured[@]}; do
-                IFS=: read pos dev rot <<< "${token}"
+        for actual in "${DEVICES[@]}"; do
+            for token in "${configured[@]}"; do
+                IFS=: read -r pos dev rot <<< "${token}"
                 if [ "${actual}" == "${dev}" ]; then
-                    for p in ${!placement[@]}; do
+                    for p in "${!placement[@]}"; do
                         if [ "$p" == "${pos}" ]; then
                             placement[$p]="${dev}"
                             rotation[$p]="${rot}"
@@ -30,17 +45,20 @@ if [ -e ${CONF} ]; then
 
         if [ -n "${placement[M]}" ]; then
             if [ ${#configured[@]} -eq ${match} ]; then
-                xrandr --output ${placement[M]} --auto --primary
-                for rid in L R A B; do
+                xrandr --output "${placement[M]}" --auto --primary
+		declare last=${placement[M]}
+                for rid in L R A B RR; do
                     if [ -n "${placement[${rid}]}" ]; then
-                        #xrandr --output ${placement[${rid}]} --off
-                        xrandr --output  ${placement[${rid}]} --auto
+                        xrandr --output "${placement[${rid}]}" --off
+                        xrandr --output "${placement[${rid}]}" --auto
                         case ${rid} in
-                            L) xrandr --output ${placement[${rid}]} --left-of  ${placement[M]} --rotation ${rotation[${rid}]};;
-                            R) xrandr --output ${placement[${rid}]} --right-of ${placement[M]} --rotation ${rotation[${rid}]};;
-                            A) xrandr --output ${placement[${rid}]} --above    ${placement[M]} --rotation ${rotation[${rid}]};;
-                            B) xrandr --output ${placement[${rid}]} --below    ${placement[M]} --rotation ${rotation[${rid}]};;
+                            L) xrandr --output "${placement[${rid}]}" --left-of  "${placement[M]}" --rotation "${rotation[${rid}]}";;
+                            R) xrandr --output "${placement[${rid}]}" --right-of "${placement[M]}" --rotation "${rotation[${rid}]}";;
+                            RR) xrandr --output "${placement[${rid}]}" --right-of "${last}" --rotation "${rotation[${rid}]}";;
+                            A) xrandr --output "${placement[${rid}]}" --above    "${placement[M]}" --rotation "${rotation[${rid}]}";;
+                            B) xrandr --output "${placement[${rid}]}" --below    "${placement[M]}" --rotation "${rotation[${rid}]}";;
                         esac
+			last=${placement[${rid}]}
                     fi
                 done
             else
