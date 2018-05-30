@@ -1,24 +1,26 @@
 #!/bin/bash
 function byWifi () {
     # recognisable locations
-    declare -a locations=(home sirca)
-    declare -a homeWAPs=( "huaraz" "ScottyNet_EXT" )
-    declare -a sircaWAPs=( "sirca-data" )
+    local -a locations=(home sirca)
+    local -a homeWAPs=( "huaraz" "ScottyNet_EXT" )
+    local -a sircaWAPs=( "sirca-data" )
 
-    winf=$(iwconfig 2>/dev/null |grep IEEE)
-    winfname=${winf%% *}
-    declare -ga availableAPs=$(sudo iwlist wlp3s0 scan |grep ESSID | while read essid; do d=${essid##ESSID:}; echo "${d//\"/} "; done)
+    wifiStr=$(iwconfig 2>/dev/null |grep 802.11)
+    wifiIfName=${wifiStr%% *}
+    local -ga availableAPs;
+    availableAPs=( $(sudo iwlist "${wifiIfName}" scan |grep ESSID | while read -r essid; do d=${essid##ESSID:}; echo "${d//\"/} "; done) )
 
-    declare -ga recognisedAPs=
+    local -ga recognisedAPs=
 
     # by wifi
-    declare -a connectedAP=$(iwconfig 2>&1 |grep "Access Point:" | while read line; do echo ${line##* }; done)
+    local connectedAPMac
+    connectedAPMac=$(iwconfig 2>&1 |grep "Access Point:" | while read -r line; do echo "${line##* }"; done)
 
     # find all WAPs that are in range and in the locations array
-    for location in ${locations[@]}; do
+    for location in "${locations[@]}"; do
         for wap in $(eval echo \${${location}WAPs[@]}); do
-            for availableAP in ${availableAPs[@]}; do
-                if [ ${availableAP} == ${wap} ]; then
+            for availableAP in "${availableAPs[@]}"; do
+                if [ "${availableAP}" == "${wap}" ]; then
                     recognisedAPs+=(${wap})
                 fi
             done
@@ -26,7 +28,7 @@ function byWifi () {
     done
 
     # determine location based on WAPs found
-    for location in ${locations[@]}; do
+    for location in "${locations[@]}"; do
         for wap in $(eval echo \${${location}WAPs[@]}); do
             for recognisedAP in ${recognisedAPs[@]}; do
                 if [ "${wap}" == "${recognisedAP}" ]; then
@@ -35,7 +37,21 @@ function byWifi () {
             done
         done
     done
-    echo ${location}
+    echo "${location}"
+}
+
+function byScreens() {
+    local -A locations
+    local screens
+    locations["home-office"]="eDP1 DP1 HDMI2"
+    screens=$(xrandr |grep " connected " | cut -d" " -f1)
+
+    for location in "${!locations[@]}"; do
+        if [ "${locations[${location}]}" == "${screens}" ]; then
+            break
+        fi
+    done
+    echo "${location}"
 }
 
 
@@ -84,4 +100,15 @@ function byAP () {
     done
 }
 
-byWifi
+if (( $# == 1 )); then
+    case "$1" in
+        wifi) byWifi ;;
+        screens) byScreens ;;
+        *)
+            echo "No valid options."
+            exit 1
+            ;;
+    esac
+else
+    byWifi
+fi
