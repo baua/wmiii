@@ -28,7 +28,7 @@ logger INFO "bootstrapping nomad-wmii system...complete"
 # generic and host-specific
 ssh-add
 SSH_KEY_HOST=${HOME}/.ssh/id_rsa_${HOSTNAME}
-test -r ${SSH_KEY_HOST} && ssh-add ${SSH_KEY_HOST}
+#test -r ${SSH_KEY_HOST} && ssh-add ${SSH_KEY_HOST}
 
 #. Open up /event for reading; and read line by line:
 logger INFO "loop(main)...start"

@@ -22,13 +22,13 @@ if sb_ready 60; then
     #esac
     case $(sb_state "${MOUSE_L}") in
         0) DATA="$($BIN day running show short)"
-           if [ "${DATA%% *}" -eq 1 ]; then
+           if [ "${DATA%%:*}" -eq 1 ]; then
                SYMBOL=00bc
-           elif [ "${DATA%% *}" -eq 2 ]; then
+           elif [ "${DATA%%:*}" -eq 2 ]; then
                SYMBOL=00bd
-           elif [ "${DATA%% *}" -eq 3 ]; then
+           elif [ "${DATA%%:*}" -eq 3 ]; then
                SYMBOL=00be
-           elif [ "${DATA%% *}" -eq 4 ]; then
+           elif [ "${DATA%%:*}" -eq 4 ]; then
                SYMBOL=263a
            fi
            DATA=${DATA#* }
